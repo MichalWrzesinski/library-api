@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Author>
  */
-final class AuthorRepository extends ServiceEntityRepository
+final class AuthorRepository extends ServiceEntityRepository implements AuthorRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
