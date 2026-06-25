@@ -5,6 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\BorrowBookAction;
+use App\Controller\ReturnBookAction;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,10 +20,35 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+        new Post(
+            uriTemplate: '/books/{id}/borrow',
+            controller: BorrowBookAction::class,
+            output: false,
+            read: true,
+            deserialize: false,
+            name: 'borrow_book',
+        ),
+        new Post(
+            uriTemplate: '/books/{id}/return',
+            controller: ReturnBookAction::class,
+            output: false,
+            read: true,
+            deserialize: false,
+            name: 'return_book',
+        ),
+    ],
+)]
 #[UniqueEntity(fields: ['serialNumber'])]
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-final class Book
+class Book
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

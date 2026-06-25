@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
-final class Author
+class Author
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

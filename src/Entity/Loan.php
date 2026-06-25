@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LoanRepository::class)]
-final class Loan
+class Loan
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,7 +19,7 @@ final class Loan
     #[Assert\NotNull]
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Book $book = null;
+    private Book $book;
 
     #[Assert\NotBlank]
     #[Assert\Regex('/^\d{6}$/')]
@@ -55,7 +55,7 @@ final class Loan
         return $this->id;
     }
 
-    public function getBook(): ?Book
+    public function getBook(): Book
     {
         return $this->book;
     }
@@ -128,5 +128,12 @@ final class Loan
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function markAsReturned(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->returnedAt = $now;
+        $this->updatedAt = $now;
     }
 }
