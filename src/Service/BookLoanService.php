@@ -8,14 +8,14 @@ use App\Entity\Book;
 use App\Entity\Loan;
 use App\Exception\BookAlreadyBorrowedException;
 use App\Exception\BookNotBorrowedException;
-use App\Repository\LoanRepository;
+use App\Repository\LoanRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class BookLoanService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private LoanRepository $loanRepository,
+        private LoanRepositoryInterface $loanRepository,
     ) {
     }
 

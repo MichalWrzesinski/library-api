@@ -89,7 +89,7 @@
             "@auto-scripts"
         ],
         "test": "php bin/phpunit",
-        "phpstan": "phpstan analyse src tests",
+        "phpstan": "phpstan analyse src tests --memory-limit=512M",
         "cs:check": "php-cs-fixer fix --dry-run --diff",
         "cs:fix": "php-cs-fixer fix"
     },

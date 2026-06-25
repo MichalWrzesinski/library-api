@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Loan>
  */
-final class LoanRepository extends ServiceEntityRepository
+final class LoanRepository extends ServiceEntityRepository implements LoanRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -25,6 +25,17 @@ final class LoanRepository extends ServiceEntityRepository
             ->andWhere('loan.book = :book')
             ->andWhere('loan.returnedAt IS NULL')
             ->setParameter('book', $book)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function existsForBook(Book $book): bool
+    {
+        return (bool) $this->createQueryBuilder('loan')
+            ->select('1')
+            ->andWhere('loan.book = :book')
+            ->setParameter('book', $book)
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }

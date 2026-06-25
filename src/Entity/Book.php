@@ -12,12 +12,14 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\BorrowBookAction;
+use App\Controller\DeleteBookAction;
 use App\Controller\ReturnBookAction;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -27,7 +29,12 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(),
         new Put(),
         new Patch(),
-        new Delete(),
+        new Delete(
+            controller: DeleteBookAction::class,
+            output: false,
+            read: true,
+            name: 'delete_book',
+        ),
         new Post(
             uriTemplate: '/books/{id}/borrow',
             controller: BorrowBookAction::class,
@@ -45,34 +52,42 @@ use Symfony\Component\Validator\Constraints as Assert;
             name: 'return_book',
         ),
     ],
+    normalizationContext: ['groups' => ['book:read']],
+    denormalizationContext: ['groups' => ['book:write']],
 )]
 #[UniqueEntity(fields: ['serialNumber'])]
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
+    #[Groups(['book:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['book:read', 'book:write'])]
     #[Assert\NotBlank]
     #[Assert\Regex('/^\d{6}$/')]
     #[ORM\Column(length: 6, unique: true)]
     private ?string $serialNumber = null;
 
+    #[Groups(['book:read', 'book:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Groups(['book:read', 'book:write'])]
     #[Assert\NotNull]
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Author $author = null;
 
+    #[Groups(['book:read'])]
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    #[Groups(['book:read'])]
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
 

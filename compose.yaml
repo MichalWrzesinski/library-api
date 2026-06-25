@@ -10,7 +10,6 @@ services:
     depends_on:
       - database
     environment:
-      APP_ENV: dev
       DATABASE_URL: postgresql://app:app@database:5432/library_api?serverVersion=16&charset=utf8
     command: php -S 0.0.0.0:8000 -t public
 

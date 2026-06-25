@@ -9,25 +9,33 @@ use App\Repository\AuthorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['author:read']],
+    denormalizationContext: ['groups' => ['author:write']],
+)]
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
 class Author
 {
+    #[Groups(['book:read', 'author:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['book:read', 'author:read', 'author:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Groups(['author:read'])]
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    #[Groups(['author:read'])]
     #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
 
